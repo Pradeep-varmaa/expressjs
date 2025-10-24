@@ -18,6 +18,13 @@ app.get('/', (req, res) => {
     }).status(200)
 })
 
+app.get('/get', (req, res) => {
+    res.json({
+        msg: 'This is a express api for testing purposes only ',
+        status: 200
+    }).status(200)
+})
+
 app.post('/', (req, res) => {
     res.json({ msg: ' There is nothing that post route' }).status(200)
 })
