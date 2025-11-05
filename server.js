@@ -64,6 +64,7 @@ app.post('/portfolio/contactform', (req, res) => {
                 console.log('Error:', err);
             } else {
                 console.log('Email sent successfully:', info.response);
+                res.json({msg:'Email sent to Target Mail', status:200})
             }
         });
         }
