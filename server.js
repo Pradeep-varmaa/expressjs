@@ -43,7 +43,7 @@ app.post('/portfolio/contactform', (req, res) => {
 
     const msgtext = {
         from: process.env.Email_id,
-        to: 'ppvarma07@gmail.com',
+        to: 'rajeswarchowdary09@gmail.com',
         subject: 'Got a new mail from Portfolio',
         html :`<h3>We got the Data from your Webpage</h3> 
         <p style = 'color: white'> Data submited by the ${name}</p> 
