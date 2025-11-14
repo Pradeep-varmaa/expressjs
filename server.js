@@ -46,10 +46,10 @@ app.post('/portfolio/contactform', (req, res) => {
         to: 'rajeswarchowdary09@gmail.com',
         subject: 'Got a new mail from Portfolio',
         html :`<h3>We got the Data from your Webpage</h3> 
-        <p style = 'color: white'> Data submited by the ${name}</p> 
-        <h3 style = 'color: white'> Name : ${name} </h3> 
-        <h3 style = 'color: white'> Email : ${email} </p></h3>  
-        <h3 style = 'color: white'> Suggestion : ${msg} </p></h3>  
+        <p style = 'color: black'> Data submited by the ${name}</p> 
+        <h3 style = 'color: black'> Name : ${name} </h3> 
+        <h3 style = 'color: blue'> Email : ${email} </p></h3>  
+        <h3 style = 'color: black'> Suggestion : ${msg} </p></h3>  
 
         <p>Thanking you, </p> 
         <p>Yours Lovingly</p>
