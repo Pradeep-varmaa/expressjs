@@ -3,6 +3,7 @@ const cors = require('cors');
 const nodemailer = require('./nodemailer')
 const {sql ,connect} = require('./mssql')
 require('dotenv').config()
+const nodecron = require('node-cron')
 
 const app = express();
 
@@ -71,6 +72,94 @@ app.post('/portfolio/contactform', (req, res) => {
 
     Sendmail()
 })
+
+
+app.post('/remainder/setremainder', async (req,res)=>{
+    const {remainder, link} = req.body
+    const pool= await Connect()
+    const response = await pool.request()
+    .input('remainder' , remainder)
+    .input('link', link)
+    .query('INSERT INTO Remainders(Activity, Link) VALUES(@remainder, @link)',(err,res)=>{
+        if(err) console.log(err)
+        return 'Success'
+    })
+})
+
+var remainderList = []
+app.get('/remainder/setremainder',async (req,res)=>{
+    const pool= await Connect()
+    const response = await pool.request().query('select * from Remainders')
+    const data = response.recordset
+    remainderList = data
+    res.json(data)
+})
+
+app.delete('/remainder/setremainder/:remainder',async (req,res)=>{
+    const remainder = req.params.remainder
+    const pool= await Connect()
+    await pool.request()
+    .input('remainder' , remainder)
+    .query('DELETE FROM Remainders where Activity=@remainder',(err,res)=>{
+        if(err) console.log(err)
+        return 'Success'
+    })
+})
+
+nodecron.schedule('30 7 * * *', async () => {
+
+    const pool= await Connect()
+    const response = await pool.request().query('select * from Remainders')
+    const data = response.recordset
+    remainderList = data
+    console.log(data)
+
+  const tableitems = remainderList.map((el, index) => {
+  return `
+    <tr style="padding:10px;border-bottom:1px solid #eee;">
+        <td>${index + 1}</td>
+        <td>${el.Activity}</td>
+    </tr>
+  `;
+}).join(""); 
+
+
+
+  const msgtext = {
+        from: process.env.Email_id,
+        to: 'ppvarmajobs@gmail.com',
+        subject: 'Un-completed tasks in today',
+        html :`<h4>These are the tasks you have to completed before going to sleep</h4>
+
+        <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222;width:100vw;">
+        <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse;width:100%;">
+      <tr>
+        <th>#</th>
+        <th>Task</th>
+      </tr>
+
+      ${tableitems}
+    </table>
+    </div>
+        `
+    };
+
+        async function Sendmail(){
+            const transport = await nodemailer.connect()
+
+        transport.sendMail(msgtext, (err, info) => {
+            if (err) {
+                console.log('Error:', err);
+            } else {
+                console.log('Email sent successfully:', info.response);
+                res.json({msg:'Email sent to Target Mail', status:200})
+            }
+        });
+        }
+
+        Sendmail()
+    });
+
 
 
 
